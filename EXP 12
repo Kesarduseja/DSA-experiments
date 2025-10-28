@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_CONTACTS 100
+#define MAX_NAME_LEN 50
+#define MAX_PHONE_LEN 15
+
+typedef struct {
+    char name[MAX_NAME_LEN];
+    char phone[MAX_PHONE_LEN];
+} Contact;
+
+// Binary search function to find contact by name
+int binarySearch(Contact contacts[], int n, char key[]) {
+    int low = 0, high = n - 1;
+
+    while (low <= high) {
+        int mid = (low + high) / 2;
+        int cmp = strcmp(contacts[mid].name, key);
+
+        if (cmp == 0)
+            return mid;            // Found the contact
+        else if (cmp < 0)
+            low = mid + 1;         // Search right half
+        else
+            high = mid - 1;        // Search left half
+    }
+
+    return -1;  // Not found
+}
+
+int main() {
+    Contact contacts[MAX_CONTACTS] = {
+        {"Alice", "100-200-1200"},
+        {"Bob", "200-100-2000"},
+        {"Charlie", "300-400-5000"},
+        {"David", "900-800-1000"},
+        {"Eve", "500-200-1000"}
+    };
+    int n = 5;  // Number of contacts (must be sorted by name)
+
+    char searchName[MAX_NAME_LEN];
+
+    printf("Enter name to search: ");
+    fgets(searchName, MAX_NAME_LEN, stdin);
+    searchName[strcspn(searchName, "\n")] = 0;  // Remove newline
+
+    int index = binarySearch(contacts, n, searchName);
+
+    if (index != -1) {
+        printf("Found %s: Phone Number is %s\n", contacts[index].name, contacts[index].phone);
+    } else {
+        printf("Contact '%s' not found in phonebook.\n", searchName);
+    }
+
+    return 0;
+}
