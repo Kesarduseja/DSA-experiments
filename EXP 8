@@ -1,0 +1,164 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Node structure
+struct Node {
+    int data;
+    struct Node* next;
+    struct Node* prev;
+};
+
+struct Node* head = NULL;
+
+// Create a new node
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    if (!newNode) {
+        printf("Memory allocation failed\n");
+        exit(1);
+    }
+    newNode->data = data;
+    newNode->next = newNode->prev = NULL;
+    return newNode;
+}
+
+// Insert at beginning
+void insertAtBeginning(int data) {
+    struct Node* newNode = createNode(data);
+
+    if (head == NULL) {
+        newNode->next = newNode->prev = newNode;
+        head = newNode;
+    } else {
+        struct Node* last = head->prev;
+
+        newNode->next = head;
+        newNode->prev = last;
+
+        head->prev = newNode;
+        last->next = newNode;
+
+        head = newNode;
+    }
+
+    printf("%d inserted at beginning\n", data);
+}
+
+// Insert at end
+void insertAtEnd(int data) {
+    struct Node* newNode = createNode(data);
+
+    if (head == NULL) {
+        newNode->next = newNode->prev = newNode;
+        head = newNode;
+    } else {
+        struct Node* last = head->prev;
+
+        newNode->next = head;
+        newNode->prev = last;
+
+        last->next = newNode;
+        head->prev = newNode;
+    }
+
+    printf("%d inserted at end\n", data);
+}
+
+// Delete from beginning
+void deleteFromBeginning() {
+    if (head == NULL) {
+        printf("List is empty!\n");
+        return;
+    }
+
+    if (head->next == head) {
+        printf("%d deleted from beginning\n", head->data);
+        free(head);
+        head = NULL;
+    } else {
+        struct Node* last = head->prev;
+        struct Node* temp = head;
+
+        head = head->next;
+        head->prev = last;
+        last->next = head;
+
+        printf("%d deleted from beginning\n", temp->data);
+        free(temp);
+    }
+}
+
+// Delete from end
+void deleteFromEnd() {
+    if (head == NULL) {
+        printf("List is empty!\n");
+        return;
+    }
+
+    if (head->next == head) {
+        printf("%d deleted from end\n", head->data);
+        free(head);
+        head = NULL;
+    } else {
+        struct Node* last = head->prev;
+        struct Node* secondLast = last->prev;
+
+        secondLast->next = head;
+        head->prev = secondLast;
+
+        printf("%d deleted from end\n", last->data);
+        free(last);
+    }
+}
+
+// Display list forward
+void displayForward() {
+    if (head == NULL) {
+        printf("List is empty.\n");
+        return;
+    }
+
+    struct Node* temp = head;
+    printf("Circular Doubly Linked List (forward): ");
+    do {
+        printf("%d -> ", temp->data);
+        temp = temp->next;
+    } while (temp != head);
+    printf("(back to head)\n");
+}
+
+// Display list in reverse
+void displayReverse() {
+    if (head == NULL) {
+        printf("List is empty.\n");
+        return;
+    }
+
+    struct Node* last = head->prev;
+    struct Node* temp = last;
+
+    printf("Circular Doubly Linked List (reverse): ");
+    do {
+        printf("%d -> ", temp->data);
+        temp = temp->prev;
+    } while (temp != last);
+    printf("(back to tail)\n");
+}
+
+// Main function to test
+int main() {
+    insertAtEnd(10);
+    insertAtEnd(20);
+    insertAtBeginning(50);
+    insertAtEnd(30);
+    displayForward();
+    displayReverse();
+
+    deleteFromBeginning();
+    displayForward();
+
+    deleteFromEnd();
+    displayForward();
+
+    return 0;
+}
