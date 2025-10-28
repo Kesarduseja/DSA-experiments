@@ -1,0 +1,97 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define JOB_NAME_LEN 50
+
+// Node structure for queue
+typedef struct Node {
+    char jobName[JOB_NAME_LEN];
+    struct Node* next;
+} Node;
+
+Node* front = NULL;
+Node* rear = NULL;
+
+// Enqueue a new print job
+void enqueue(char* jobName) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    strcpy(newNode->jobName, jobName);
+    newNode->next = NULL;
+
+    if (rear == NULL) {
+        front = rear = newNode;
+    } else {
+        rear->next = newNode;
+        rear = newNode;
+    }
+}
+
+// Dequeue (process) the print job
+char* dequeue() {
+    if (front == NULL) {
+        return NULL; // Queue empty
+    }
+
+    Node* temp = front;
+    front = front->next;
+
+    if (front == NULL) {
+        rear = NULL;
+    }
+
+    char* job = (char*)malloc(JOB_NAME_LEN * sizeof(char));
+    strcpy(job, temp->jobName);
+    free(temp);
+    return job;
+}
+
+// Check if queue is empty
+int isEmpty() {
+    return front == NULL;
+}
+
+int main() {
+    int choice;
+    char job[JOB_NAME_LEN];
+
+    printf("Print Job Manager (Queue)\n");
+
+    while (1) {
+        printf("\n1. Add Print Job\n");
+        printf("2. Process Next Job\n");
+        printf("3. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+        getchar(); // consume newline
+
+        switch (choice) {
+            case 1:
+                printf("Enter print job name: ");
+                fgets(job, JOB_NAME_LEN, stdin);
+                job[strcspn(job, "\n")] = 0; // remove newline
+                enqueue(job);
+                printf("Job added: %s\n", job);
+                break;
+
+            case 2:
+                if (!isEmpty()) {
+                    char* processedJob = dequeue();
+                    printf("Processing job: %s\n", processedJob);
+                    free(processedJob);
+                } else {
+                    printf("No jobs to process!\n");
+                }
+                break;
+
+            case 3:
+                printf("Exiting...\n");
+                exit(0);
+
+            default:
+                printf("Invalid choice!\n");
+        }
+    }
+
+    return 0;
+}
