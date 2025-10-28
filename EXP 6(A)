@@ -1,0 +1,87 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_LEN 100
+
+// Node structure for stack
+typedef struct Node {
+    char data[MAX_LEN];      // Store state (e.g., text input)
+    struct Node* next;
+} Node;
+
+Node* top = NULL;
+
+// Push new state onto stack
+void push(char* state) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    strcpy(newNode->data, state);
+    newNode->next = top;
+    top = newNode;
+}
+
+// Pop last state from stack
+char* pop() {
+    if (top == NULL) {
+        return NULL; // Stack empty
+    }
+    Node* temp = top;
+    top = top->next;
+    char* poppedData = (char*)malloc(MAX_LEN * sizeof(char));
+    strcpy(poppedData, temp->data);
+    free(temp);
+    return poppedData;
+}
+
+// Check if stack is empty
+int isEmpty() {
+    return top == NULL;
+}
+
+int main() {
+    char currentText[MAX_LEN] = "";
+
+    int choice;
+    char input[MAX_LEN];
+
+    printf("Simple Text Editor with Undo (Stack)\n");
+
+    while (1) {
+        printf("\nCurrent Text: %s\n", currentText);
+        printf("1. Type Text\n");
+        printf("2. Undo\n");
+        printf("3. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+        getchar(); // consume newline
+
+        switch (choice) {
+            case 1:
+                push(currentText); // Save current state before change
+                printf("Enter text to add: ");
+                fgets(input, MAX_LEN, stdin);
+                input[strcspn(input, "\n")] = 0; // remove newline
+                strcat(currentText, input);
+                break;
+
+            case 2:
+                if (!isEmpty()) {
+                    char* prevState = pop();
+                    strcpy(currentText, prevState);
+                    free(prevState);
+                } else {
+                    printf("Nothing to undo!\n");
+                }
+                break;
+
+            case 3:
+                printf("Exiting...\n");
+                exit(0);
+
+            default:
+                printf("Invalid choice!\n");
+        }
+    }
+
+    return 0;
+}
