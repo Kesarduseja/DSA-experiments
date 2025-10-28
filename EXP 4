@@ -1,0 +1,96 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define SIZE 5  // Define the size of the circular queue
+
+int queue[SIZE];
+int front = -1;
+int rear = -1;
+
+// Check if the queue is full
+int isFull() {
+    return (front == (rear + 1) % SIZE);
+}
+
+// Check if the queue is empty
+int isEmpty() {
+    return (front == -1);
+}
+
+// Enqueue operation
+void enqueue(int value) {
+    if (isFull()) {
+        printf("Queue is full! Cannot insert %d\n", value);
+        return;
+    }
+
+    if (isEmpty()) {
+        front = 0;
+        rear = 0;
+    } else {
+        rear = (rear + 1) % SIZE;
+    }
+
+    queue[rear] = value;
+    printf("Inserted %d\n", value);
+}
+
+// Dequeue operation
+void dequeue() {
+    if (isEmpty()) {
+        printf("Queue is empty! Cannot dequeue.\n");
+        return;
+    }
+
+    int deletedValue = queue[front];
+
+    if (front == rear) {
+        // Queue has only one element
+        front = -1;
+        rear = -1;
+    } else {
+        front = (front + 1) % SIZE;
+    }
+
+    printf("Deleted %d\n", deletedValue);
+}
+
+// Display the queue
+void display() {
+    if (isEmpty()) {
+        printf("Queue is empty.\n");
+        return;
+    }
+
+    printf("Queue elements: ");
+    int i = front;
+    while (1) {
+        printf("%d ", queue[i]);
+        if (i == rear)
+            break;
+        i = (i + 1) % SIZE;
+    }
+    printf("\n");
+}
+
+// Main function to test
+int main() {
+    enqueue(10);
+    enqueue(20);
+    enqueue(30);
+    enqueue(40);
+    enqueue(50); // Should show queue is full
+    display();
+
+    dequeue();
+    dequeue();
+    display();
+
+    enqueue(60);
+    enqueue(70);
+    display();
+
+    enqueue(80); // Should show queue is full
+    return 0;
+}
+
