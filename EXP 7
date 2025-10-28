@@ -1,0 +1,141 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Node structure
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+struct Node* head = NULL;
+
+// Create a new node
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    if (!newNode) {
+        printf("Memory allocation failed!\n");
+        exit(1);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// Insert at beginning
+void insertAtBeginning(int data) {
+    struct Node* newNode = createNode(data);
+
+    if (head == NULL) {
+        head = newNode;
+        newNode->next = head;
+    } else {
+        struct Node* temp = head;
+        while (temp->next != head)
+            temp = temp->next;
+        newNode->next = head;
+        temp->next = newNode;
+        head = newNode;
+    }
+    printf("%d inserted at beginning\n", data);
+}
+
+// Insert at end
+void insertAtEnd(int data) {
+    struct Node* newNode = createNode(data);
+
+    if (head == NULL) {
+        head = newNode;
+        newNode->next = head;
+    } else {
+        struct Node* temp = head;
+        while (temp->next != head)
+            temp = temp->next;
+        temp->next = newNode;
+        newNode->next = head;
+    }
+    printf("%d inserted at end\n", data);
+}
+
+// Delete from beginning
+void deleteFromBeginning() {
+    if (head == NULL) {
+        printf("List is empty!\n");
+        return;
+    }
+
+    if (head->next == head) {
+        printf("%d deleted from beginning\n", head->data);
+        free(head);
+        head = NULL;
+    } else {
+        struct Node* temp = head;
+        struct Node* last = head;
+
+        while (last->next != head)
+            last = last->next;
+
+        head = head->next;
+        last->next = head;
+        printf("%d deleted from beginning\n", temp->data);
+        free(temp);
+    }
+}
+
+// Delete from end
+void deleteFromEnd() {
+    if (head == NULL) {
+        printf("List is empty!\n");
+        return;
+    }
+
+    if (head->next == head) {
+        printf("%d deleted from end\n", head->data);
+        free(head);
+        head = NULL;
+    } else {
+        struct Node* temp = head;
+        struct Node* prev = NULL;
+
+        while (temp->next != head) {
+            prev = temp;
+            temp = temp->next;
+        }
+
+        prev->next = head;
+        printf("%d deleted from end\n", temp->data);
+        free(temp);
+    }
+}
+
+// Display the list
+void displayList() {
+    if (head == NULL) {
+        printf("List is empty.\n");
+        return;
+    }
+
+    struct Node* temp = head;
+    printf("Circular Singly Linked List: ");
+    do {
+        printf("%d -> ", temp->data);
+        temp = temp->next;
+    } while (temp != head);
+    printf("(back to head)\n");
+}
+
+// Main function to test
+int main() {
+    insertAtEnd(20);
+    insertAtEnd(30);
+    insertAtBeginning(10);
+    insertAtEnd(40);
+    displayList();
+
+    deleteFromBeginning();
+    displayList();
+
+    deleteFromEnd();
+    displayList();
+
+    return 0;
+}
